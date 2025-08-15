@@ -1,6 +1,6 @@
 import type { Board } from "../Board";
 
-export type Position = { x: number, y: number };
+export type Position = { x: number; y: number };
 
 export class Move {
   from: Position;
@@ -12,22 +12,13 @@ export class Move {
   }
 
   execute(board: Board) {
-    console.log("executing move", { from: this.from, to: this.to });
     const piece = board.getPiece(this.from);
     if (!piece) {
       throw new Error("No piece at from position");
     }
-    try {
-      const capturedPiece = board.getPiece(this.to);
-      if (capturedPiece) {
-        console.log("captured piece", capturedPiece);
-        //board.incrementScore(piece.color);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-
+    const capturedPiece = board.getPiece(this.to);
     board.setPiece(this.to, piece);
     board.removePiece(this.from);
+    return capturedPiece;
   }
 }
