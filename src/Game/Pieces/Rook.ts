@@ -1,42 +1,34 @@
-import type { Board } from "../Board";
 import { Move, type Position } from "./Move";
 import type { PieceColor } from "./Piece";
 import { Piece } from "./Piece";
 
 export class Rook extends Piece {
   constructor(color: PieceColor, position: Position) {
-    super(color, "rook", position);
+    super(color, "rook", position, "R");
   }
 
-  getMoves(board: Board): Move[] {
-    const directions = [
+  getDirections(): Position[] {
+    return [
       { x: 1, y: 0 }, // down
       { x: -1, y: 0 }, // up
       { x: 0, y: 1 }, // right
       { x: 0, y: -1 }, // left
     ];
-    const moves: Move[] = [];
-    for (const direction of directions) {
-      let newPosition = {
-        x: this.position.x + direction.x,
-        y: this.position.y + direction.y,
-      };
-      while (board.isValidPosition(newPosition)) {
-        const piece = board.getPiece(newPosition);
-        if (piece === null) {
-          moves.push(new Move(this.position, newPosition));
-        } else {
-          if (piece.color !== this.color) {
-            moves.push(new Move(this.position, newPosition));
-          }
-          break;
-        }
-        newPosition = {
-          x: newPosition.x + direction.x,
-          y: newPosition.y + direction.y,
-        };
+  }
+
+  getMovesInternal(
+    pieceAtNewPosition: Piece | null,
+    newPosition: Position,
+    moves: Move[]
+  ): { shouldStop: boolean } {
+    if (!pieceAtNewPosition) {
+      moves.push(new Move(this.position, newPosition));
+    } else {
+      if (pieceAtNewPosition.color !== this.color) {
+        moves.push(new Move(this.position, newPosition));
       }
+      return { shouldStop: true };
     }
-    return moves;
+    return { shouldStop: false };
   }
 }
