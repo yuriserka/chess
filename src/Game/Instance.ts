@@ -1,3 +1,4 @@
+import { boardRemapper } from "../Utils/board-remapper";
 import { Board } from "./Board";
 import type { Move, Position } from "./Pieces/Move";
 import type { Piece } from "./Pieces/Piece";
@@ -13,6 +14,7 @@ export class Instance {
   turn: "white" | "black";
   gameLog: EnhancedMove[] = [];
   score: { white: Piece[]; black: Piece[] } = { white: [], black: [] };
+  sequence: string[] = [];
 
   constructor() {
     this.board = new Board();
@@ -40,13 +42,40 @@ export class Instance {
         capturedPiece,
         piece,
       });
+      if (this.gameLog.length % 2 === 0 && this.gameLog.length > 1) {
+        this.updateSequence();
+      }
     }
 
     console.log({
       nextTurn: this.turn,
       score: this.score,
       gameLog: this.gameLog,
+      sequence: this.sequence,
     });
+  }
+
+  private updateSequence() {
+    const lastMove = this.gameLog[this.gameLog.length - 1];
+    const lastLastMove = this.gameLog[this.gameLog.length - 2];
+
+    function getNotation(move: EnhancedMove) {
+      const fromSquare = boardRemapper(move.move.from);
+      const toSquare = boardRemapper(move.move.to);
+      return [
+        move.piece.notation,
+        move.piece.type === "pawn" && move.move.hasCapture
+          ? fromSquare.split("")[0]
+          : "",
+        move.move.hasCapture ? "x" : "",
+        toSquare,
+      ].join("");
+    }
+
+    const lastLastMoveNotation = getNotation(lastLastMove);
+    const lastMoveNotation = getNotation(lastMove);
+
+    this.sequence.push(`${lastLastMoveNotation} ${lastMoveNotation}`);
   }
 }
 
