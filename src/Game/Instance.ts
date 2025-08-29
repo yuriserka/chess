@@ -8,16 +8,32 @@ type EnhancedMove = {
   move: Move;
 };
 
+type Time = {
+  time: number;
+  lastMoveTimestamp: number;
+};
+
 export class Instance {
   board: Board;
   turn: "white" | "black";
   gameLog: EnhancedMove[] = [];
   score: { white: Piece[]; black: Piece[] } = { white: [], black: [] };
   sequence: string[] = [];
+  time: { white: Time; black: Time };
 
-  constructor() {
+  constructor(timer: number) {
     this.board = new Board();
     this.turn = "white";
+    this.time = {
+      white: {
+        time: timer,
+        lastMoveTimestamp: Date.now(),
+      },
+      black: {
+        time: timer,
+        lastMoveTimestamp: Date.now(),
+      },
+    };
   }
 
   movePiece(piece: Piece, to: Position, afterMove: () => void) {
@@ -35,6 +51,11 @@ export class Instance {
         }
       }
       afterMove();
+      if (this.turn === "white") {
+        this.time.white.lastMoveTimestamp = Date.now();
+      } else {
+        this.time.black.lastMoveTimestamp = Date.now();
+      }
       this.turn = this.turn === "white" ? "black" : "white";
       this.gameLog.push({
         move,
@@ -63,4 +84,4 @@ export class Instance {
   }
 }
 
-export const instance = new Instance();
+export const instance = new Instance(2 * 60);
