@@ -1,4 +1,3 @@
-import { boardRemapper } from "../Utils/board-remapper";
 import { Board } from "./Board";
 import type { Move, Position } from "./Pieces/Move";
 import type { Piece } from "./Pieces/Piece";
@@ -58,24 +57,9 @@ export class Instance {
   private updateSequence() {
     const lastMove = this.gameLog[this.gameLog.length - 1];
     const lastLastMove = this.gameLog[this.gameLog.length - 2];
-
-    function getNotation(move: EnhancedMove) {
-      const fromSquare = boardRemapper(move.move.from);
-      const toSquare = boardRemapper(move.move.to);
-      return [
-        move.piece.notation,
-        move.piece.type === "pawn" && move.move.hasCapture
-          ? fromSquare.split("")[0]
-          : "",
-        move.move.hasCapture ? "x" : "",
-        toSquare,
-      ].join("");
-    }
-
-    const lastLastMoveNotation = getNotation(lastLastMove);
-    const lastMoveNotation = getNotation(lastMove);
-
-    this.sequence.push(`${lastLastMoveNotation} ${lastMoveNotation}`);
+    this.sequence.push(
+      `${lastLastMove.move.notation} ${lastMove.move.notation}`
+    );
   }
 }
 

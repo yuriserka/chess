@@ -1,6 +1,6 @@
 import { Move, type Position } from "./Move";
 import { Piece, type Direction, type PieceColor } from "./Piece";
-import { Rook } from "./Rook";
+import { Queen } from "./Queen";
 
 export class Pawn extends Piece {
   constructor(color: PieceColor, position: Position) {
@@ -60,8 +60,7 @@ export class Pawn extends Piece {
     } else {
       moves.push(
         new Move(this.position, newPosition, (board) => {
-          // TODO: handle promotion
-          board.setPiece(newPosition, new Rook(this.color, newPosition));
+          board.setPiece(newPosition, new Queen(this.color, newPosition));
         })
       );
     }

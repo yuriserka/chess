@@ -1,4 +1,6 @@
+import { boardRemapper } from "../../Utils/board-remapper";
 import type { Board } from "../Board";
+import type { Piece } from "./Piece";
 
 export type Position = { x: number; y: number };
 
@@ -7,6 +9,8 @@ export class Move {
   to: Position;
   postEffect?: (board: Board) => void;
   hasCapture: boolean;
+  isPromotion: boolean;
+  notation?: string;
 
   constructor(
     from: Position,
@@ -17,6 +21,7 @@ export class Move {
     this.to = to;
     this.postEffect = postEffect;
     this.hasCapture = false;
+    this.isPromotion = false;
   }
 
   execute(board: Board) {
@@ -29,6 +34,20 @@ export class Move {
     board.removePiece(this.from);
     this.postEffect?.(board);
     this.hasCapture = !!capturedPiece;
+    this.notation = this.getNotation(piece);
+    this.isPromotion = piece.type === "pawn" && [0, 7].includes(this.to.x);
     return capturedPiece;
+  }
+
+  private getNotation(piece: Piece) {
+    const fromSquare = boardRemapper(this.from);
+    const toSquare = boardRemapper(this.to);
+    return [
+      piece.notation,
+      piece.type === "pawn" && this.hasCapture ? fromSquare.split("")[0] : "",
+      this.hasCapture ? "x" : "",
+      toSquare,
+      this.isPromotion ? "=Q" : "",
+    ].join("");
   }
 }
