@@ -7,15 +7,23 @@ export type Direction = Position & {
   condition?: (board: Board, pieceAtNewPosition: Piece | null) => boolean;
 };
 
+export type PieceType =
+  | "bishop"
+  | "king"
+  | "knight"
+  | "pawn"
+  | "queen"
+  | "rook";
+
 export abstract class Piece {
   color: PieceColor;
-  type: string;
+  type: PieceType;
   position: Position;
   notation?: string;
 
   constructor(
     color: PieceColor,
-    type: string,
+    type: PieceType,
     position: Position,
     notation?: string
   ) {

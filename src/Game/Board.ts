@@ -1,9 +1,9 @@
 import { Bishop } from "./Pieces/Bishop";
 import { King } from "./Pieces/King";
 import { Knight } from "./Pieces/Knight";
-import type { Position } from "./Pieces/Move";
+import type { Move, Position } from "./Pieces/Move";
 import { Pawn } from "./Pieces/Pawn";
-import type { Piece } from "./Pieces/Piece";
+import type { Piece, PieceColor } from "./Pieces/Piece";
 import { Queen } from "./Pieces/Queen";
 import { Rook } from "./Pieces/Rook";
 
@@ -44,6 +44,22 @@ export class Board {
     return (
       position.x >= 0 && position.x < 8 && position.y >= 0 && position.y < 8
     );
+  }
+
+  getCheckMoves(color: PieceColor): Move[] {
+    const allColorPieces = this.pieces
+      .flatMap((row) => row.filter((piece) => piece?.color === color))
+      .filter((piece) => piece !== null);
+
+    const allMoves = allColorPieces.flatMap((piece) => piece.getMoves(this));
+    const canCaptureKingMoves = allMoves.filter((move) => {
+      const pieceAtNewPosition = this.getPiece(move.to);
+      return pieceAtNewPosition && pieceAtNewPosition.type === "king";
+    });
+
+    console.log({ allMoves, allColorPieces, canCaptureKingMoves });
+
+    return canCaptureKingMoves.filter((move) => move !== undefined);
   }
 
   private validatePosition(position: Position) {

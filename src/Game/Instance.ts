@@ -20,6 +20,7 @@ export class Instance {
   score: { white: Piece[]; black: Piece[] } = { white: [], black: [] };
   sequence: string[] = [];
   time: { white: Time; black: Time };
+  checkMoves: Move[] = [];
 
   constructor(timer: number) {
     this.board = new Board();
@@ -43,6 +44,19 @@ export class Instance {
 
     if (move) {
       const capturedPiece = move.execute(this.board);
+      this.checkMoves = [
+        ...this.checkMoves,
+        ...this.board.getCheckMoves(this.turn),
+      ];
+      if (this.checkMoves.length > 0) {
+        const checkMove = this.checkMoves[0];
+        if (checkMove.from.x !== to.x && checkMove.from.y !== to.y) {
+          throw new Error(
+            `Cannot execute move because ${this.turn} king is in check`
+          );
+        }
+      }
+
       if (capturedPiece) {
         if (capturedPiece.color === "white") {
           this.score.black.push(capturedPiece);
@@ -72,6 +86,7 @@ export class Instance {
       score: this.score,
       gameLog: this.gameLog,
       sequence: this.sequence,
+      checkMoves: this.checkMoves,
     });
   }
 

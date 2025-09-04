@@ -22,10 +22,10 @@ export class Rook extends Piece {
     moves: Move[]
   ): { shouldStop: boolean } {
     if (!pieceAtNewPosition) {
-      moves.push(new Move(this.position, newPosition));
+      moves.push(new Move({ from: this.position, to: newPosition }));
     } else {
       if (pieceAtNewPosition.color !== this.color) {
-        moves.push(new Move(this.position, newPosition));
+        moves.push(new Move({ from: this.position, to: newPosition }));
       }
       return { shouldStop: true };
     }

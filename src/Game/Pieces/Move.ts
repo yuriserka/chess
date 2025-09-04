@@ -4,6 +4,13 @@ import type { Piece } from "./Piece";
 
 export type Position = { x: number; y: number };
 
+type MoveProps = {
+  from: Position;
+  to: Position;
+  postEffect?: (board: Board) => void;
+  isCheck?: boolean;
+};
+
 export class Move {
   from: Position;
   to: Position;
@@ -11,17 +18,15 @@ export class Move {
   hasCapture: boolean;
   isPromotion: boolean;
   notation?: string;
+  isCheck?: boolean;
 
-  constructor(
-    from: Position,
-    to: Position,
-    postEffect?: (board: Board) => void
-  ) {
+  constructor({ from, to, postEffect, isCheck }: MoveProps) {
     this.from = from;
     this.to = to;
     this.postEffect = postEffect;
     this.hasCapture = false;
     this.isPromotion = false;
+    this.isCheck = isCheck;
   }
 
   execute(board: Board) {

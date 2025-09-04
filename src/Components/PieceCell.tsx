@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { instance } from "../Game/Instance";
 import type { Position } from "../Game/Pieces/Move";
 import { Piece } from "../Game/Pieces/Piece";
@@ -28,14 +29,22 @@ function PieceCell({
   }
 
   const pieceColor = piece?.color === "white" ? "text-white" : "text-black";
+  const currentSelectedPieceMoves = currentSelectedPiece?.getMoves?.(
+    instance.board
+  );
+  const isKingInCheck = instance.checkMoves.length > 0;
+
+  useEffect(() => {
+    if (isKingInCheck) {
+      setSelectedPiece(instance.board.getPiece(instance.checkMoves[0].to));
+    }
+  }, [isKingInCheck]);
 
   if (currentSelectedPiece) {
-    const isMove = currentSelectedPiece
-      .getMoves(instance.board)
-      .some(
-        (move) =>
-          move.to.x === currentPosition.x && move.to.y === currentPosition.y
-      );
+    const isMove = currentSelectedPieceMoves?.some(
+      (move) =>
+        move.to.x === currentPosition.x && move.to.y === currentPosition.y
+    );
     if (isMove) {
       const possibleMoveClasses = "border-green-500 border-3 cursor-pointer";
 

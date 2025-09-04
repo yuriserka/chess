@@ -10,7 +10,18 @@ function App() {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen">
-      <h1 className="text-2xl font-bold m-5">{instance.turn} turn</h1>
+      <h1 className="text-2xl font-bold">{instance.turn} turn</h1>
+      {instance.checkMoves.length > 0 && (
+        <h1 className="text-2xl font-bold m-5">
+          {instance.checkMoves.map((move) => move.to).map((to) => {
+            return (
+              <span key={to.x + to.y}>
+                check on {boardRemapper(to)}
+              </span>
+            );
+          })}
+        </h1>
+      )}
       <Clock
         className="mb-1"
         isRunning={instance.turn === "black"}

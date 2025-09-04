@@ -25,7 +25,7 @@ export class King extends Piece {
     moves: Move[]
   ): { shouldStop: boolean } {
     if (!pieceAtNewPosition || pieceAtNewPosition.color !== this.color) {
-      moves.push(new Move(this.position, newPosition));
+      moves.push(new Move({ from: this.position, to: newPosition }));
     }
     return { shouldStop: true };
   }

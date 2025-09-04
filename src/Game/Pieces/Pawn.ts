@@ -56,11 +56,15 @@ export class Pawn extends Piece {
       (newPosition.x === 7 && this.color === "black");
 
     if (!isFinalPosition) {
-      moves.push(new Move(this.position, newPosition));
+      moves.push(new Move({ from: this.position, to: newPosition }));
     } else {
       moves.push(
-        new Move(this.position, newPosition, (board) => {
-          board.setPiece(newPosition, new Queen(this.color, newPosition));
+        new Move({
+          from: this.position,
+          to: newPosition,
+          postEffect: (board) => {
+            board.setPiece(newPosition, new Queen(this.color, newPosition));
+          },
         })
       );
     }
